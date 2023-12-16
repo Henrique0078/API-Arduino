@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exibição de Dados</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: white;
+            background-color: black;
+            padding: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            overflow: auto;
+        }
+
+        th, td {
+            border: 1px solid #ffffff;
+            text-align: left;
+            padding: 8px;
+            color: white;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        #formulario {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-bottom: 10px;
+            margin-right: 20px;
+            color: white;
+        }
+
+        input {
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 10px;
+            background-color: black;
+            color: white;
+            margin-right: 10px;
+        }
+
+        button {
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 10px;
+            background-color: black;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #333333;
+        }
+    </style>
+</head>
+<body>
+
+<table id="dadosTabela">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome da Sala</th>
+            <th>Status</th>
+            <th>Data de Criação</th>
+            <th>Dia da Semana</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h2>Dados do Dataset</h2>
+
+<!-- Formulário para adicionar dados -->
+<form id="formulario">
+    <label for="nomeSala">Nome da Sala:</label>
+    <input type="text" id="nomeSala" name="nomeSala" required>
+
+    <label for="status">Status:</label>
+    <input type="checkbox" id="status" name="status">
+
+    <button type="button" onclick="enviarDados()">Enviar</button>
+</form>
+
+<script>
+    async function atualizarDados() {
+        try {
+            const response = await fetch('http://localhost:8000/get');
+            const data = await response.json();
+            displayData(data);
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+        }
+    }
+
+    function displayData(data) {
+        const tabelaBody = document.querySelector('#dadosTabela tbody');
+        tabelaBody.innerHTML = '';
+
+        data.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${item.id_ds}</td>
+                             <td>${item.name_room_ds}</td>
+                             <td>${item.status_ds}</td>
+                             <td>${item.created_at_ds}</td>
+                             <td>${item.weekday_ds}</td>`;
+            tabelaBody.appendChild(row);
+        });
+    }
+
+    async function enviarDados() {
+        const nomeSala = document.getElementById('nomeSala').value;
+        const status = document.getElementById('status').checked;
+
+        const dados = {
+            name_room: nomeSala,
+            status: status
+        };
+
+        try {
+            const response = await fetch('http://localhost:8000/insert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            });
+
+            const data = await response.json();
+            console.log('Dados inseridos com sucesso:', data);
+
+            // Atualizar a tabela após a inserção
+            await atualizarDados();
+        } catch (error) {
+            console.error('Erro ao enviar dados:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        atualizarDados();
+    });
+</script>
+
+</body>
+</html>
