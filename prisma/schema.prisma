@@ -13,4 +13,5 @@ model dataset {
   status_ds     Boolean?  @default(false)
   created_at_ds DateTime? @default(now()) @db.Timestamp(0)
   weekday_ds    String?   @db.VarChar(20)
+  month_ds      String?   @db.VarChar(30)
 }

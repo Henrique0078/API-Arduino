@@ -10,7 +10,8 @@ export default class datasetService{
 					created_at_ds: undefined,
 					name_room_ds: name_room,
 					status_ds: status,
-					weekday_ds: undefined
+					weekday_ds: undefined,
+					month_ds: undefined
 				}
 			});
 			return dataset;
