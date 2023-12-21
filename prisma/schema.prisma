@@ -3,15 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "postgres"
+  url      = env("DATABASE_URL2")
 }
 
 model dataset {
   id_ds         Int       @id @default(autoincrement())
   name_room_ds  String?   @db.VarChar(100)
   status_ds     Boolean?  @default(false)
-  created_at_ds DateTime? @default(now()) @db.Timestamp(0)
+  created_at_ds DateTime? @default(now()) @db.Timestamp(6)
   weekday_ds    String?   @db.VarChar(20)
   month_ds      String?   @db.VarChar(30)
 }
